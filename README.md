@@ -24,8 +24,8 @@ output_file_name
 
 The following packages need to be installed on your machine:
 
-networkx
-pygraphviz
-Pandas
-Numpy
-Google Cloud SDK (only if you are reading the data from GCP)
+* networkx
+* pygraphviz
+* Pandas
+* Numpy
+* Google Cloud SDK (only if you are reading the data from GCP)
