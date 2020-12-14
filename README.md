@@ -19,3 +19,13 @@ num_nodes : number of nodes
 edge_weight_lower_bound: if the weight of the edge is less than the bound it won't be present in the graph
 plot_most_common_path: show the most common path in the graph 
 output_file_name
+
+## Requirements:
+
+The following packages need to be installed on your machine:
+
+networkx
+pygraphviz
+Pandas
+Numpy
+Google Cloud SDK (only if you are reading the data from GCP)
