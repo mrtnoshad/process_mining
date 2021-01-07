@@ -5,7 +5,7 @@ plot_process(dataframe, user_id_column ='enc_id', time_column = 'time_diff', eve
  
 ### Description of the arguments:
  
-\textbf{dataframe:} the event log data in the format of a dataframe. The columns of the data should be as follows:
+dataframe: the event log data in the format of a dataframe. The columns of the data should be as follows:
  
 * A column for the user id (specified in user_id_column)
 
@@ -14,7 +14,13 @@ plot_process(dataframe, user_id_column ='enc_id', time_column = 'time_diff', eve
 * One or several columns for the labels of the events (specified in event_label_columns)
 
 
-\textbf{include_all_events:}
+include_all_events: A Boolean (True/False) to specify if the process mining graph should include all of the events or only a subset of them. If this is False, then include_event_list should specify a list of the event names to include in the graph. 
+
+include_event_list: The list of the event names to include in the graph. If several columns are specified as labels in event_label_columns  then the filter only applies on the first column.
+
+
+
+
 
 
 
