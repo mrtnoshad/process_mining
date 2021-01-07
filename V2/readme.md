@@ -5,7 +5,8 @@ plot_process(dataframe, user_id_column ='enc_id', time_column = 'time_diff', eve
  
 ### Description of the arguments:
  
-dataframe: the event log data in the format of a dataframe. The columns of the data should be as follows:
+#### dataframe: 
+The event log data in the format of a dataframe. The columns of the data should be as follows:
  
 * A column for the user id (specified in user_id_column)
 
