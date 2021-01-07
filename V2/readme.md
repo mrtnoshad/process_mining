@@ -18,7 +18,13 @@ include_all_events: A Boolean (True/False) to specify if the process mining grap
 
 include_event_list: The list of the event names to include in the graph. If several columns are specified as labels in event_label_columns  then the filter only applies on the first column.
 
+encoding_dict: A dictionary of the abbreviations/encoding/text_replacement in the node names event_label_column 
 
+num_nodes: number of nodes 
+
+edge_weight_lower_bound: if the weight of the edge is less than the bound it won't be present in the graph 
+
+plot_most_common_path: show the most common path in the graph output_file_name
 
 
 
