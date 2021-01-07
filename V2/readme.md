@@ -27,7 +27,7 @@ A dictionary of the abbreviations/encoding/text_replacement in the node names ev
 #### num_nodes: 
 number of nodes 
 
-####edge_weight_lower_bound: 
+#### edge_weight_lower_bound: 
 if the weight of the edge is less than the bound it won't be present in the graph 
 
 #### plot_most_common_path: 
