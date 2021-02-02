@@ -22,10 +22,10 @@ output_file_name
 
 ## Requirements:
 
-The following packages need to be installed on your machine:
+The following requirements need to be installed on your machine:
 
-* networkx
-* pygraphviz
-* Pandas
-* Numpy
-* Google Cloud SDK (only if you are reading the data from GCP)
+
+- Python==3.6
+- networkx==2.5
+- pygraphviz==1.3
+- Pandas=1.1.3
