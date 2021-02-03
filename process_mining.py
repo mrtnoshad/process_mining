@@ -1,43 +1,63 @@
 
+# Process Mining Code
+# Morteza Noshad;  Stanford
 
-from google.cloud import bigquery
-from google.cloud.bigquery import dbapi;
+
 import numpy as np
 import pandas as pd
 import math
 import networkx as nx
 import pygraphviz as pgv # pygraphviz should be available
 
-def plot_process(data, event_types, node_names, abbreviation_dict={} ,num_nodes = 15, edge_weight_lower_bound = 5, plot_most_common_path = True, output_file_name='output'):
+def plot_process(dataframe, user_id_column ='user_id', time_column = 'time', event_label_columns = ['event_name', 'event_type'] , include_all_events = True, include_event_list = [], filter_encoding_dict={} ,num_nodes = 15, edge_weight_lower_bound = 5, plot_most_common_path = True, output_file_name='output'):
 
-	df_f = data
+	df_f = dataframe
+	abbreviation_dict = filter_encoding_dict
 
 # node name preprocessing
 	print('Creating	the column "node_name"...')
 	
 	if len(abbreviation_dict.keys())>0:
 		Apply_ABB = True # Apply abbreviation
+	else:
+		Apply_ABB = False
 
 	# Create The column node_name
-	df_f['node_name'] = df_f[node_names[0]]
+	if isinstance(event_label_columns, str):
+		df_f['node_name'] = df_f[event_label_columns]
+	else:
+		df_f['node_name'] = df_f[event_label_columns[0]]
+
+		for i in range(1,len(event_label_columns)):
+			df_f['node_name'] = df_f['node_name'] +' - ' +df_f[event_label_columns[i]]   
 
 	# Node name edits and abbrevations
 	if Apply_ABB==True:
-	    for x in abbreviation_dict.keys():
-	        df_f['node_name']=df_f['node_name'].replace(x,abbreviation_dict[x])
+		for x in abbreviation_dict.keys():
+			df_f['node_name']=df_f['node_name'].replace(x,abbreviation_dict[x])
 
-
-	for i in range(1,len(node_names)):
-	    df_f['node_name'] = df_f['node_name'] +' - ' +df_f[node_names[i]]   
-
-
-# Choose top k nodes
-	print("Now we only need the following columns: 'enc_id', 'node_name', 'time_diff' ")
-	print("Choosing top k nodes")
+	# Choose top k nodes
+	#print("Now we only need the following columns: 'enc_id', 'node_name', 'time_diff' ")
+	#print("Choosing top k nodes")
 
 	k = num_nodes 
 
-	df_enc_event = df_f[['enc_id', 'node_name', 'time_diff']]
+	#df_enc_event = df_f['node_name']
+	#print(df_enc_event.head())
+	#df_enc_event['time_diff'] = df_f[time_column]
+	#print(df_enc_event.head())
+	#df_enc_event['enc_id'] = df_f[user_id_column]
+	#print(df_enc_event.head())
+	
+	df_enc_event = df_f[[user_id_column, time_column,'node_name'  ]]
+	#print(df_enc_event .columns)
+	df_enc_event = df_enc_event.rename(columns={user_id_column:'enc_id', time_column: 'time_diff'})
+	#print(df_enc_event.head())
+	#print(df_enc_event.columns)
+	#print(df_f[time_column])
+	#print(df_f[user_id_column])
+	#print(df_f.columns)
+
 
 	# drop duplicate node_names (might be of different time_diff)
 	df_enc_event = df_enc_event.drop_duplicates(subset=['enc_id','node_name'])
@@ -58,7 +78,7 @@ def plot_process(data, event_types, node_names, abbreviation_dict={} ,num_nodes 
 
 
 # Create table of unique encounter id
-	print('Creating table of unique encounter id')
+	print('Creating table of unique user id')
 
 	unq_PC_enc_event = df_enc_event.groupby(['enc_id'])['node_name'].apply(list).reset_index().rename(columns={'enc_id':'enc_id', 0:'event_list'}).sort_values('enc_id',ascending=True)  
 	unq_PC_enc_time = df_enc_event.groupby(['enc_id'])['time_diff'].apply(list).reset_index().rename(columns={'enc_id':'enc_id', 0:'time_diff'}).sort_values('enc_id',ascending=True)  
@@ -71,7 +91,7 @@ def plot_process(data, event_types, node_names, abbreviation_dict={} ,num_nodes 
 	i = 10
 	#print(superlist[i])
 
-	unq_PC_enc.to_csv('all_workflows.csv')
+	# unq_PC_enc.to_csv('all_workflows.csv')
 
 
 # Get consecuative pairs
