@@ -1,5 +1,3 @@
-# Clinical Process Mining
-
 
 ### The function is in the following format:
 
@@ -40,14 +38,3 @@ the name of the output file
 
 
 
-
-
-## Requirements:
-
-The following requirements need to be installed on your machine:
-
-
-- Python==3.6
-- networkx==2.5
-- pygraphviz==1.3
-- Pandas=1.1.3
