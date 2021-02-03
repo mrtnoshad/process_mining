@@ -1,24 +1,46 @@
 # Clinical Process Mining
 
-The process mining function is in the following format:
 
-plot_process(data, event_types, node_names, abbreviation_dict ,num_nodes, edge_weight_lower_bound, plot_most_common_path, output_file_name)
+### The function is in the following format:
 
-Here is a description of the input arguments:
+plot_process(dataframe, user_id_column ='user_id', time_column = 'time', event_label_columns = ['event_name', 'event_type'] , include_all_events = True, include_event_list = [], filter encoding_dict={} ,num_nodes = 15, edge_weight_lower_bound = 5, plot_most_common_path = True, output_file_name='output')
+ 
+### Description of the arguments:
+ 
+#### dataframe: 
+The event log data in the format of a dataframe. The columns of the data should be as follows:
+ 
+* A column for the user id (specified in user_id_column)
 
- data: the input data with the following columns:
- 'jc_uid', 'enc_id', 'event_type', 'event_name', 'event_time',
-      'emergencyAdmitTime', 'tpaAdminTime', 'time_diff', 'user_type',
-       'event_category', 'node_name'
+* The time of the event (specified in time_column)
+
+* One or several columns for the labels of the events (specified in event_label_columns)
 
 
-Event_type: the type of the event (Order medication, order procedure, etc)
-node_names: What would be the node names. If it's a list, then the node name is concatenation of the names
-abbreviation_dict: A dictionary of the abbreviations in the node names
-num_nodes : number of nodes
-edge_weight_lower_bound: if the weight of the edge is less than the bound it won't be present in the graph
-plot_most_common_path: show the most common path in the graph 
-output_file_name
+#### include_all_events: 
+A Boolean (True/False) to specify if the process mining graph should include all of the event types or only a subset of them. If this is False, then include_event_list should specify a list of the event names to include in the graph. 
+
+#### include_event_list: 
+The list of the event names to include in the graph. If several columns are specified as labels in event_label_columns  then the filter only applies on the first column.
+
+#### encoding_dict: 
+A dictionary of the abbreviations/encoding/text_replacement in the node names event_label_column 
+
+#### num_nodes: 
+number of nodes 
+
+#### edge_weight_lower_bound: 
+if the weight of the edge is less than the bound it won't be present in the graph 
+
+#### plot_most_common_path: 
+show the most common path in the graph output_file_name
+
+#### output_file_name: 
+the name of the output file
+
+
+
+
 
 ## Requirements:
 
