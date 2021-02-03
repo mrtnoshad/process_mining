@@ -1,7 +1,7 @@
 
 ### The function is in the following format:
 
-plot_process(dataframe, user_id_column ='enc_id', time_column = 'time_diff', event_label_columns = ['event_type', 'event_category'] , include_all_events = True, include_event_list = [], filter encoding_dict={} ,num_nodes = 15, edge_weight_lower_bound = 5, plot_most_common_path = True, output_file_name='output')
+plot_process(dataframe, user_id_column ='user_id', time_column = 'time', event_label_columns = ['event_name', 'event_type'] , include_all_events = True, include_event_list = [], filter encoding_dict={} ,num_nodes = 15, edge_weight_lower_bound = 5, plot_most_common_path = True, output_file_name='output')
  
 ### Description of the arguments:
  
