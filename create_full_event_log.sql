@@ -1,4 +1,4 @@
-CREATE OR REPLACE TABLE noshad.aim2_event_list_all_v5 as
+CREATE OR REPLACE TABLE noshad.aim2_event_list_all_v6 as
 SELECT 
 
 jc_uid, 
@@ -13,28 +13,6 @@ COALESCE(PM1.prov_type, PM2.unique_role)  as user_type
 
 FROM
 (
-
--- ADT Table
-
-(
-SELECT ADT.jc_uid as jc_uid, 
-  ADT.pat_enc_csn_id_coded as enc_id, 
-  'ADT' as event_type, ---|| ADT.event_type || ' - ' || ADT.department_id as event_type,
-  CAST(ADT.event_type_c AS STRING) as event_id,
-  ADT.event_type as event_name, --|| ' - ' || ADT.department_id as event_name,
-  ADT.effective_time_jittered as event_time,
-  cohort.emergencyAdmitTime as emergencyAdmitTime,
-  Cohort.tpaAdminTime as tpaAdminTime,
-  ' 0 ' as prov_id
-  
-  FROM `noshad.cohort_v2` as Cohort
-  LEFT JOIN `starr_datalake2018.adt` AS ADT
-  ON ADT.pat_enc_csn_id_coded = Cohort.pat_enc_csn_id_coded
-
-) 
-
-UNION ALL
-
 
 
 -- Order Medication Table
@@ -254,6 +232,32 @@ UNION ALL
 where  datetime_diff(al.access_time_jittered, cohort.tpaAdminTime, MINUTE) >= -360 --up to 6 hours before tpa admin time 
   and datetime_diff(al.access_time_jittered, cohort.tpaAdminTime, MINUTE) <= 0
 )
+
+
+
+UNION ALL
+
+-- Admission from Access Log Data
+(select 
+
+  al.rit_uid as jc_uid, 
+  cohort.pat_enc_csn_id_coded as enc_id, 
+  'Access log' as event_type, --|| metric_name as event_type,
+  CAST(al.metric_id AS STRING) as event_id,
+  CAST(al.metric_name AS STRING) as event_name,
+  CAST(al.access_time_jittered AS DATETIME) as event_time,
+  cohort.emergencyAdmitTime as emergencyAdmitTime,
+  Cohort.tpaAdminTime as tpaAdminTime,
+  al.user_deid as prov_id
+
+  from noshad.cohort_v2 as cohort
+  join `shc_access_log.shc_access_log_de` as al on cohort.jc_uid  = al.rit_uid 
+  -- only capture the access logs within 60 min before and after the cohort
+where  datetime_diff(al.access_time_jittered, cohort.emergencyAdmitTime, MINUTE) >= -20 --up to  20 min before the admit time 
+  and datetime_diff(al.access_time_jittered, cohort.emergencyAdmitTime, MINUTE) <= 0
+  and CAST(al.metric_name AS STRING) LIKE 'Registration/ADT workflow initiated'
+)
+
 
 ) AS EV
 
