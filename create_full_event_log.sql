@@ -1,3 +1,6 @@
+--SELECT * FROM `som-nero-phi-jonc101.noshad.aim2_event_list_all_v6`
+--WHERE event_type NOT LIKE 'Access%'
+
 CREATE OR REPLACE TABLE noshad.aim2_event_list_all_v6 as
 SELECT 
 
@@ -242,9 +245,9 @@ UNION ALL
 
   al.rit_uid as jc_uid, 
   cohort.pat_enc_csn_id_coded as enc_id, 
-  'Access log' as event_type, --|| metric_name as event_type,
+  'Admission' as event_type, --|| metric_name as event_type,
   CAST(al.metric_id AS STRING) as event_id,
-  CAST(al.metric_name AS STRING) as event_name,
+  'Registration' AS event_name, --CAST(al.metric_name AS STRING) as event_name,
   CAST(al.access_time_jittered AS DATETIME) as event_time,
   cohort.emergencyAdmitTime as emergencyAdmitTime,
   Cohort.tpaAdminTime as tpaAdminTime,
