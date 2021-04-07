@@ -1,6 +1,3 @@
---SELECT * FROM `som-nero-phi-jonc101.noshad.aim2_event_list_all_v6`
---WHERE event_type NOT LIKE 'Access%'
-
 CREATE OR REPLACE TABLE noshad.aim2_event_list_all_v6 as
 SELECT 
 
@@ -259,6 +256,7 @@ UNION ALL
 where  datetime_diff(al.access_time_jittered, cohort.emergencyAdmitTime, MINUTE) >= -20 --up to  20 min before the admit time 
   and datetime_diff(al.access_time_jittered, cohort.emergencyAdmitTime, MINUTE) <= 0
   and CAST(al.metric_name AS STRING) LIKE 'Registration/ADT workflow initiated'
+  LIMIT 1
 )
 
 
@@ -267,7 +265,3 @@ where  datetime_diff(al.access_time_jittered, cohort.emergencyAdmitTime, MINUTE)
 -- JOIN WITH PROV_TYPE MAPPING 
 LEFT JOIN `starr_datalake2018.prov_map` as PM1 ON PM1.prov_map_id=EV.prov_id
 LEFT JOIN `noshad.prov_id_map_2` as PM2 ON PM2.prov_map_id=EV.prov_id
-
-WHERE CAST(event_time AS DATETIME) <= tpaAdminTime
-GROUP BY jc_uid, enc_id, event_type, event_name, event_time, emergencyAdmitTime, time_diff, tpaAdminTime, user_type
-ORDER BY jc_uid, enc_id, event_time
