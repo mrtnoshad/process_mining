@@ -245,18 +245,26 @@ UNION ALL
   'Admission' as event_type, --|| metric_name as event_type,
   CAST(al.metric_id AS STRING) as event_id,
   'Registration' AS event_name, --CAST(al.metric_name AS STRING) as event_name,
-  CAST(al.access_time_jittered AS DATETIME) as event_time,
+  MIN(CAST(al.access_time_jittered AS DATETIME)) as event_time,
   cohort.emergencyAdmitTime as emergencyAdmitTime,
   Cohort.tpaAdminTime as tpaAdminTime,
-  al.user_deid as prov_id
+  MIN(al.user_deid) as prov_id
 
   from noshad.cohort_v2 as cohort
   join `shc_access_log.shc_access_log_de` as al on cohort.jc_uid  = al.rit_uid 
   -- only capture the access logs within 60 min before and after the cohort
-where  datetime_diff(al.access_time_jittered, cohort.emergencyAdmitTime, MINUTE) >= -20 --up to  20 min before the admit time 
+where  datetime_diff(al.access_time_jittered, cohort.emergencyAdmitTime, MINUTE) >= -60 --up to  20 min before the admit time 
   and datetime_diff(al.access_time_jittered, cohort.emergencyAdmitTime, MINUTE) <= 0
   and CAST(al.metric_name AS STRING) LIKE 'Registration/ADT workflow initiated'
-  LIMIT 1
+  GROUP BY 
+    jc_uid, 
+    enc_id, 
+    event_type,  -- ||' - ' || (case when MP.unique_role is not null then MP.unique_role else ' Provider: None ' end) as event_type, 
+    event_id,
+    event_name,
+    emergencyAdmitTime,  
+    tpaAdminTime
+
 )
 
 
@@ -265,3 +273,7 @@ where  datetime_diff(al.access_time_jittered, cohort.emergencyAdmitTime, MINUTE)
 -- JOIN WITH PROV_TYPE MAPPING 
 LEFT JOIN `starr_datalake2018.prov_map` as PM1 ON PM1.prov_map_id=EV.prov_id
 LEFT JOIN `noshad.prov_id_map_2` as PM2 ON PM2.prov_map_id=EV.prov_id
+
+WHERE CAST(event_time AS DATETIME) <= tpaAdminTime
+GROUP BY jc_uid, enc_id, event_type, event_name, event_time, emergencyAdmitTime, time_diff, tpaAdminTime, user_type
+ORDER BY jc_uid, enc_id, event_time
