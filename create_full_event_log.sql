@@ -1,4 +1,4 @@
-CREATE OR REPLACE TABLE noshad.aim2_event_list_all_v4 as
+CREATE OR REPLACE TABLE noshad.aim2_event_list_all_v5 as
 SELECT 
 
 jc_uid, 
@@ -147,11 +147,18 @@ UNION ALL
 
 -- Lab Collection Table
 (
+
+With DESCR AS 
+(
+SELECT proc_code, description FROM `som-nero-phi-jonc101.starr_datalake2018.order_proc`
+GROUP BY proc_code, description
+)
+
 SELECT LR0.rit_uid as jc_uid, 
   LR0.pat_enc_csn_id_coded as enc_id, 
   'Lab Collection' as event_type, -- || LR0.proc_code as event_type,
   LR0.proc_code as event_id,
-  LR0.proc_code as event_name,  --lab_name
+  DESCR.description as event_name,   --lab_name
   LR0.taken_time_jittered as event_time,
   cohort.emergencyAdmitTime as emergencyAdmitTime,
   Cohort.tpaAdminTime as tpaAdminTime,
@@ -160,6 +167,11 @@ SELECT LR0.rit_uid as jc_uid,
   FROM `noshad.cohort_v2` as Cohort
   LEFT JOIN `starr_datalake2018.lab_result` AS LR0
   ON LR0.pat_enc_csn_id_coded = Cohort.pat_enc_csn_id_coded
+  
+    
+  LEFT JOIN DESCR
+  ON LR0.proc_code = DESCR.proc_code
+  
 )
 
 UNION ALL
